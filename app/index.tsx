@@ -4,17 +4,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "@/components/BalanceCard";
 import TransactionRow from "@/components/TransactionRow";
 import { calculateTotalSavings } from "@/utils/financeUtils";
+import EmptyState from "@/components/EmpyState";
 import { useMemo } from "react";
 
 
 // Define Mock Data for TransactionRow
-const MOCK_TRANSACTIONS = [
-  { id: '1', title: 'Starbucks', amount: 5.45, date: 'Jan 23' },
-  { id: '2', title: 'Uber', amount: 12.20, date: 'Jan 22' },
-  { id: '3', title: 'Netflix', amount: 16.99, date: 'Jan 20' },
-  { id: '4', title: 'Loblaws', amount: 45.12, date: 'Jan 18' },
-  { id: '5', title: 'Spotify', amount: 10.99, date: 'Jan 15' },
-]
+const MOCK_TRANSACTIONS: any = [
+  // { id: '1', title: 'Starbucks', amount: 5.45, date: 'Jan 23' },
+  // { id: '2', title: 'Uber', amount: 12.20, date: 'Jan 22' },
+  // { id: '3', title: 'Netflix', amount: 16.99, date: 'Jan 20' },
+  // { id: '4', title: 'Loblaws', amount: 45.12, date: 'Jan 18' },
+  // { id: '5', title: 'Spotify', amount: 10.99, date: 'Jan 15' },
+];
 
 
 export default function Home() {
@@ -52,9 +53,10 @@ export default function Home() {
             date={item.date}
           />
         )}
+        // Empty List Component
+        ListEmptyComponent={EmptyState}
       />
       </View>
-
     </SafeAreaView>
   );
 }
