@@ -1,50 +1,33 @@
-# Welcome to your Expo app 👋
+# Portolio Pulse 📈
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A high perfomance dashboard built with **React Native (Expo)** and **Typescript**, focused on a financial data integrity and mobile first architecture. 
 
-## Get started
+**Logic Used**
+**1. Integer Math:** All monetary values are processed as integers (cents) to guarantee precision. 
+**2. Round Up Logic:** A custom engine calculates the "spare change" from transactions to simulate automated savings. 
 
-1. Install dependencies
+**📱 Features**
+* **Dynamic Dashboard:** Real time calculation of total "Date Fund" savings.
+* **Goal Tracking:** Visual progress bar that clamps values to 100% to prevent UI overflows
+* **Empty State:** UX friendly "Zero Data" handling to guide new users.
+* **Dark Mode Native:** Styled for modern mobile aesthetics. 
 
-   ```bash
-   npm install
-   ```
 
-2. Start the app
+## 💡 Key Technical Decisions
 
-   ```bash
-   npx expo start
-   ```
+### 1. Type Safety via Interfaces
+I utilized TypeScript interfaces to enforce a strict contract between parent and child components. This prevents runtime crashes by catching data type mismatches at compile time which is critical for a banking application where data reliability is important.
 
-In the output, you'll find options to open the app in a
+### 2. Memory Management
+Instead of using a standard `ScrollView`, which renders all data at once, I implemented a `FlatList`. This uses **virtualization** to recycle view components as the user scrolls, ensuring the app maintains 60fps even with thousands of transactions.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 3. The "Round-Up" Algorithm
+Located in `utils/financeUtils.ts`, the core logic adheres to pure function principles:
+```typescript
+// Example of the integer-math approach used
+const calculateRoundUp = (amount: number): number => {
+  const amountInCents = Math.round(amount * 100);
+  const ceilingInCents = Math.ceil(amountInCents / 100) * 100;
+  return (ceilingInCents - amountInCents) / 100;
+};
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
