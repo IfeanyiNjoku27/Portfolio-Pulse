@@ -34,7 +34,7 @@ export default function Home() {
       </View>
 
       {/* Balance Card */}
-      <BalanceCard label="Date Fund" amount={totalSavings} />
+      <BalanceCard label="Date Fund" amount={totalSavings} goalAmount={150} />
 
       {/* Recent Activity Section */}
       <View style={styles.listContainer}>
