@@ -13,7 +13,9 @@ A high perfomance dashboard built with **React Native (Expo)** and **Typescript*
 * **Dark Mode Native:** Styled for modern mobile aesthetics. 
 
 ### Application Demo
-https://github.com/user-attachments/assets/eedea4aa-5e88-48b3-9cd7-437aad0c928a
+https://github.com/user-attachments/assets/a50e4e0a-cbba-49c6-a677-9d271fbfc22b
+
+
 
 
 ## 💡 Key Technical Decisions
