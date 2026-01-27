@@ -12,6 +12,9 @@ A high perfomance dashboard built with **React Native (Expo)** and **Typescript*
 * **Empty State:** UX friendly "Zero Data" handling to guide new users.
 * **Dark Mode Native:** Styled for modern mobile aesthetics. 
 
+### Application Demo
+https://github.com/user-attachments/assets/eedea4aa-5e88-48b3-9cd7-437aad0c928a
+
 
 ## 💡 Key Technical Decisions
 
@@ -39,4 +42,7 @@ const calculateRoundUp = (amount: number): number => {
   const ceilingInCents = Math.ceil(amountInCents / 100) * 100;
   return (ceilingInCents - amountInCents) / 100;
 };
+
+
+
 
