@@ -7,7 +7,7 @@ enum AccountType {
 
 enum TransactionType {
     DEPOSIT 
-    WITHDRAWL 
+    WITHDRAWAL 
     ROUND_UP
 }
 
@@ -16,7 +16,7 @@ type  User {
     id: ID!
     firstName: String!
     email: String!
-    personalTransaction: [Transaction!]
+    personalTransactions: [Transaction!]
     sharedAccounts: [SharedAccount!]
     createdAt: String!
 }
@@ -51,7 +51,7 @@ type Transaction {
 # Queries
 type Query {
 #fetch a user and all nested accounts and transactions
-    getUser(id: Id!): User
+    getUser(id: ID!): User
 
 # Fetch a specific shared account to load its dashboard
     getSharedAccount(id: ID!): SharedAccount

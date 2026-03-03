@@ -11,19 +11,20 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@apollo/server": "^4.11.2",
+    "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "graphql": "^16.9.0",
     "pg": "^8.19.0"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
+    "dotenv": "^17.3.1",
     "nodemon": "^3.1.14",
     "prisma": "^7.4.2"
   }
