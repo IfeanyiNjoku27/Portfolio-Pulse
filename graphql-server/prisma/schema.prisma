@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// enums
+enum AccountType {
+  INDIVIDUAL
+  COUPLE 
+  FAMILY
+}
+enum TransactionType {
+    DEPOSIT 
+    WITHDRAWL 
+    ROUND_UP
+}
+
+// User type
+model User {
+  id              String            @id @default(uuid())
+  firstName       String
+  email           String            @unique
+  transactions     Transaction[]
+  sharedAccounts  SharedAccount[]
+  createdAt       DateTime          @default(now())
+}
+
+model SharedAccount {
+  id              String            @id @default(uuid())
+  name            String
+  type            AccountType
+  members         User[]
+  transactions     Transaction[]
+  totalBalance    Float             @default(0.0)
+  savingsGoal     Float?  
+  createdAt       DateTime           @default(now())
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  amount          Float 
+  amountInCents   Int
+  category        String
+  type            TransactionType
+  description     String?
+  date            DateTime          @default(now())
+
+  // transaction should be tied to user who made it
+  postedById      String
+  postedBy        User              @relation(fields: [postedById], references: [id])
+
+  // if this is null then its personal transaction. If it has an id, it belongs to shared pool
+  sharedAccountId String?
+  sharedAccount   SharedAccount?    @relation(fields: [sharedAccountId], references: [id])
+}
