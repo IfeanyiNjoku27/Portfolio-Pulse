@@ -15,8 +15,9 @@ const client = new ApolloClient({
 export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
-      <Stack>
+      <Stack initialRouteName="index">
         <Stack.Screen name="index" options={{ headerShown: false}} />
+        <Stack.Screen name="signup" options={{ headerShown: false}} />
         </Stack>
     </ApolloProvider>
 
