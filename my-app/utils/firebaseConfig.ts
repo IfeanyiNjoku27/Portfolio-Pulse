@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// my web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDVRY9BtxouDd36KSSOTd-1WOKJoNRIZxA",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: "portfolio-pulse-82779.firebaseapp.com",
   projectId: "portfolio-pulse-82779",
   storageBucket: "portfolio-pulse-82779.firebasestorage.app",
