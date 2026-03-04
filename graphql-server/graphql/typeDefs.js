@@ -63,7 +63,7 @@ type Query {
 # Mutations 
 type Mutation {
     #Create a new user
-    createUser(firstName: String!, email: String!): User!
+    createUser(id: ID!, firstName: String!, email: String!): User!
 
     # Initialize new shared pool for the couple accounts 
     createSharedAccount(name: String!, type: AccountType!, memberIds: [ID!]!): SharedAccount!

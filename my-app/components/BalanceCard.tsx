@@ -43,19 +43,19 @@ const styles = StyleSheet.create({
   // New Styles for the Bar
   progressBarBackground: {
     height: 8,
-    backgroundColor: "#2C2C2E", // Dark Grey Track
+    backgroundColor: "#2C2C2E", 
     borderRadius: 4,
     overflow: "hidden", // Ensures the inner bar respects the rounded corners
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#34C759", // Apple Green / Wealthsimple Green
+    backgroundColor: "#34C759", 
     borderRadius: 4,
   },
   goalText: {
     color: "#8E8E93",
     fontSize: 12,
     marginTop: 8,
-    textAlign: "right", // Align text to the right
+    textAlign: "right", 
   },
 });

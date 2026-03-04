@@ -21,7 +21,7 @@ enum TransactionType {
 
 // User type
 model User {
-  id              String            @id @default(uuid())
+  id              String            @id 
   firstName       String
   email           String            @unique
   transactions     Transaction[]

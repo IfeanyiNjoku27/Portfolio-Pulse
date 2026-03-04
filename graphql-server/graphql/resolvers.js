@@ -22,9 +22,9 @@ export const Resolvers = {
 
   // MUTATIONS
   Mutation: {
-    createUser: async (_, { firstName, email }) => {
+    createUser: async (_, { id, firstName, email }) => {
       return await prisma.user.create({
-        data: { firstName, email },
+        data: { id, firstName, email },
       });
     },
 
