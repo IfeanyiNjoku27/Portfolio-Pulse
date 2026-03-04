@@ -13,6 +13,10 @@ export const Resolvers = {
       return await prisma.sharedAccount.findUnique({
         where: { id },
       });
+    },
+
+    getAllUsers: async () => {
+        return await prisma.user.findMany();
     }
   }, 
 

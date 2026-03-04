@@ -50,6 +50,9 @@ type Transaction {
 
 # Queries
 type Query {
+#Get all users
+    getAllUsers: [User!]!
+
 #fetch a user and all nested accounts and transactions
     getUser(id: ID!): User
 
@@ -67,7 +70,7 @@ type Mutation {
 
     # Add transaction. if sharedAccountId is provided, it goes to shared pool
     addTransaction(
-        userID: ID!
+        userId: ID!
         amount: Float!
         category: String!
         type: TransactionType!
