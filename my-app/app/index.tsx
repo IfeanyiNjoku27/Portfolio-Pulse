@@ -1,102 +1,97 @@
 import { HeaderTitle } from "@react-navigation/elements";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BalanceCard from "@/components/BalanceCard";
 import TransactionRow from "@/components/TransactionRow";
-import { calculateTotalSavings, getSpendingByCategory } from "@/utils/financeUtils";
+import {
+  calculateTotalSavings,
+  getSpendingByCategory,
+} from "@/utils/financeUtils";
 import EmptyState from "@/components/EmpyState";
 import SpendingBlock from "@/components/SpendingBlock";
 import { useMemo } from "react";
+import { useQuery } from "@apollo/client/react";
+import { gql } from "@apollo/client";
+import { QueryData } from "@/types";
 
-// Define Mock Data for TransactionRow
-const MOCK_TRANSACTIONS = [
-  { id: '1', title: 'Starbucks', amount: 5.45, date: 'Jan 23', category: 'Food' },
-  { id: '2', title: 'Uber', amount: 12.20, date: 'Jan 22', category: 'Transport' },
-  { id: '3', title: 'Netflix', amount: 16.99, date: 'Jan 20', category: 'Entertainment' },
-  { id: '4', title: 'Loblaws', amount: 45.12, date: 'Jan 18', category: 'Grocery' },
-  { id: '5', title: 'Spotify', amount: 10.99, date: 'Jan 15', category: 'Entertainment' },
-  { id: '6', title: 'Tim Hortons', amount: 3.25, date: 'Jan 14', category: 'Food' },
-  { id: '7', title: 'Uber Eats', amount: 68.77, date: 'Jan 26', category: 'Food'},
-];
+// Define graphql query
+const GET_USER_DATA = gql`
+  query GetUserData {
+    getUser(id: "f1bd5a2c-8b69-4c0e-b06c-b1b2c18faff3") {
+    id
+    firstName
+      personalTransactions {
+        id
+        description
+        amount
+        category
+        date
+        type
+      }
+  }
+}
+`;
 
 export default function Home() {
-  // useMemo ensures it is only recalculated if MOCK_TRANSACTIONS changes
-  // This prevents the math from running on every single re-render.
-  const totalSavings = useMemo(() => {
-    return calculateTotalSavings(MOCK_TRANSACTIONS);
-  }, []);
+  const { loading, error, data } = useQuery<QueryData>(GET_USER_DATA);
 
-  // Calculate spending data
-  const spendingData = useMemo(() => {
-    return getSpendingByCategory(MOCK_TRANSACTIONS);
-  }, []);
+  //useMemo to handle live data and calculations
+  const { totalBalance, totalSpent } = useMemo(() => {
+    let balance = 0;
+    let spent = 0;
 
+    if (data?.getUser.personalTransactions) {
+      data.getUser.personalTransactions.forEach((tx: any) => {
+        if(tx.type === 'DEPOSIT') {
+          balance += tx.amount;
+        } else if (tx.type === 'WITHDRAWAL') {
+          balance -= tx.amount;
+          spent += tx.amount;
+        }
+    });
+    }
+    return { totalBalance: balance, totalSpent: spent };
+  }, [data]);
+
+  // UI states
+  if (loading) return <View style={styles.centered}><ActivityIndicator size="large" /></View>;
+  if (error) return <View style={styles.centered}><Text>Error loading data: {error.message}</Text></View>;
+
+  const transactions = data?.getUser?.personalTransactions || [];
+
+  // 5. Render the UI
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Area */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.HeaderTitle}>Portfolio Pulse</Text>
-      </View>
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Welcome back, {data?.getUser?.firstName}</Text>
+      
+      <BalanceCard balance={totalBalance} spent={totalSpent} />
 
-      {/* Balance Card */}
-      <BalanceCard label="Date Fund" amount={totalSavings} goalAmount={25} />
-
-      {/* Spending Block */}
-      <SpendingBlock data={spendingData} />
-
-      {/* Recent Activity Section */}
-      <View style={styles.listContainer}>
-        <Text style={styles.sectionTitle}>Recent Activity</Text>
-
-        {/* Transaction Row Flatlist*/}
-        <FlatList
-          data={MOCK_TRANSACTIONS}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TransactionRow
-              id={item.id}
-              title={item.title}
-              amount={item.amount}
-              date={item.date}
-            />
-          )}
-          // Empty List Component
-          ListEmptyComponent={EmptyState}
-        />
-      </View>
-    </SafeAreaView>
+      <Text style={styles.subHeader}>Recent Transactions</Text>
+      
+      {transactions.length === 0 ? (
+        <EmptyState message="No transactions yet. Start tracking!" />
+      ) : (
+        transactions.map((tx: any) => (
+          <TransactionRow 
+            key={tx.id} 
+            transaction={tx} 
+          />
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0E0E0E",
-  },
-  headerContainer: {
-    paddingHorizontal: 20, //adds spacing to the left and right
-    marginTop: 10,
-  },
-  HeaderTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  listContainer: {
-    flex: 1, // Takes remaining space
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  sectionTitle: {
-    color: "#8E8E93",
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 10,
-    textTransform: "uppercase",
-  },
-  text: {
-    fontFamily: "Conchin",
-    fontSize: 20,
-    color: "#912",
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, marginTop: 40 },
+  subHeader: { fontSize: 18, fontWeight: '600', marginBottom: 10, marginTop: 20 }
 });

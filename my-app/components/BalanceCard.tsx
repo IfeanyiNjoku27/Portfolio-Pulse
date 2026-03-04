@@ -1,48 +1,17 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-
-//Require a label (e.g: "Total Balance") and an 'amount' (e.g: 5000)
-interface BalanceCardProp {
-  label: string;
-  amount: number;
-  goalAmount: number;
-}
+import { BalanceCardProp } from "@/types";
 
 export default function BalanceCard({
-  label,
-  amount,
-  goalAmount,
+  balance, 
+  spent
 }: BalanceCardProp) {
-  //Using Intl.NumberFormat for currency so that commas are handled automatically
-  const formattedAmount = new Intl.NumberFormat("en-CA", {
-    style: "currency",
-    currency: "CAD",
-  }).format(amount);
-
-  // Calculate percentage (0 to 100)
-  // Using Math.min to ensure the bar never goes past 100% width
-  const progressPercent = Math.min(amount / goalAmount) * 100;
-
   return (
     <View style={styles.card}>
       <View style={styles.textContainer}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.amount}>{formattedAmount}</Text>
+        <Text>Balance: ${balance}</Text>
+        <Text>Spent: ${spent}</Text>
       </View>
-
-      {/* Progress Bar Container */}
-      <View style={styles.progressBarBackground}>
-        <View 
-            style={[
-                styles.progressBarFill,
-                { width: `${progressPercent}%` }
-            ]}
-        />
-      </View>
-
-      <Text style={styles.goalText}>
-        Target: ${goalAmount}
-      </Text>
     </View>
   );
 }
@@ -50,7 +19,7 @@ export default function BalanceCard({
 // Card Style
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#1C1C1E",
+    backgroundColor: "#dfdff2",
     borderRadius: 16,
     padding: 24,
     marginVertical: 20,
