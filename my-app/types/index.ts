@@ -37,3 +37,8 @@ export interface TransactionRowProp {
     type: string;
   };
 }
+
+// Plaid link token prop
+export interface PlaidLinkButtonProps {
+    userId: string;
+}

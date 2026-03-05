@@ -17,6 +17,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { QueryData } from "@/types";
+import PlaidLinkButton from "@/components/PlaidLinkButton";
 
 // Define graphql query
 const GET_USER_DATA = gql`
@@ -116,6 +117,7 @@ export default function Home() {
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
+      {userId && <PlaidLinkButton userId={userId} />}
 
       <BalanceCard balance={totalBalance} spent={totalSpent} />
 
