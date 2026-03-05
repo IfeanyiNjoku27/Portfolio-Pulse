@@ -20,12 +20,13 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "graphql": "^16.9.0",
-    "pg": "^8.19.0"
+    "pg": "^8.19.0",
+    "plaid": "^41.3.0"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
     "dotenv": "^17.3.1",
     "nodemon": "^3.1.14",
-    "prisma": "^7.4.2"
+    "prisma": "^6.19.2"
   }
 }

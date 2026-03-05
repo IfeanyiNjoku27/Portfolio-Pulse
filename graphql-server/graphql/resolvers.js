@@ -1,4 +1,5 @@
 import { prisma } from '../config/adapter.js';
+import { plaidClient } from '../config/plaid.js';
 
 export const Resolvers = {
   // QUERIES
@@ -55,7 +56,27 @@ export const Resolvers = {
           ...(sharedAccountId && { sharedAccount: { connect: { id: sharedAccountId } } })
         }
       });
-    }
+    },
+
+    // Plaid mutation
+    createPlaidLinkToken: async (_, { userId }) => {
+      try {
+        const tokenResponse = await plaidClient.linkTokenCreate({
+          user: {
+            client_user_id: userId,
+          },
+          client_name: 'Portfolio Pulse',
+          products: ['transactions'],
+          country_codes: ['US', 'CA'],
+          language: 'en',
+        });
+
+        return tokenResponse.data.link_token;
+      } catch (error) {
+        console.error("Error creating Plaid link token: ", error.response?.data || error);
+        throw new Error("Failed to create Plaid link token");
+      }
+    },
   }, 
 
   // FIELD RESOLVERS

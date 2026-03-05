@@ -77,5 +77,8 @@ type Mutation {
         description: String
         sharedAccountId: ID
     ): Transaction! 
+
+    # Plaid link token
+    createPlaidLinkToken(userId: ID!): String!
 }
 `;
