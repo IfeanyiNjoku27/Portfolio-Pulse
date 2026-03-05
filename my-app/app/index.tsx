@@ -133,8 +133,8 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#f5f5f5" },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1, padding: 20, backgroundColor: "#000000" },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000000" },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -142,12 +142,13 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
   },
-  header: { fontSize: 24, fontWeight: "bold" },
+  header: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },
   signOutText: { color: "#FF3B30", fontSize: 16, fontWeight: "600" },
   subHeader: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
     marginTop: 20,
+    color: "#FFFFFF"
   },
 });

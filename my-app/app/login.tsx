@@ -44,6 +44,7 @@ export default function Login() {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor={styles.placeholderTextColor.color}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -52,6 +53,7 @@ export default function Login() {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor={styles.placeholderTextColor.color}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -81,21 +83,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#000000",
   },
   header: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
+    color: "#FFFFFF"
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#1C1C1E",
+    color: "#FFFFFF",
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#2C2C2E",
+  },
+  placeholderTextColor: {
+    color: "#FFFFFF"
   },
   button: {
     backgroundColor: "#34C759",
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   linkText: {
-    color: "#007AFF",
+    color: "#0A84FF",
     textAlign: "center",
     marginTop: 20,
     fontSize: 14,

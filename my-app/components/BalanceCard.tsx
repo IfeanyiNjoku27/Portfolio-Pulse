@@ -9,8 +9,8 @@ export default function BalanceCard({
   return (
     <View style={styles.card}>
       <View style={styles.textContainer}>
-        <Text>Balance: ${balance}</Text>
-        <Text>Spent: ${spent}</Text>
+        <Text style={styles.label}>Balance: ${balance}</Text>
+        <Text style={styles.amount}>Spent: ${spent}</Text>
       </View>
     </View>
   );
@@ -19,7 +19,7 @@ export default function BalanceCard({
 // Card Style
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#dfdff2",
+    backgroundColor: "#1C1C1E",
     borderRadius: 16,
     padding: 24,
     marginVertical: 20,
