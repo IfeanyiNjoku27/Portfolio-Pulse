@@ -3,7 +3,7 @@ import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
 
-const API_URL = 'http://localhost:4000/graphql';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/graphql';
 const link = new HttpLink({
   uri: API_URL,
 });
