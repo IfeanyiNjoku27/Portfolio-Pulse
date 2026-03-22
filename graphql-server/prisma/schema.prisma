@@ -27,6 +27,7 @@ model User {
   email           String            @unique
   transactions     Transaction[]
   sharedAccounts  SharedAccount[]
+  plaidConnection PlaidConnection[]
   createdAt       DateTime          @default(now())
 }
 
@@ -57,4 +58,13 @@ model Transaction {
   // if this is null then its personal transaction. If it has an id, it belongs to shared pool
   sharedAccountId String?
   sharedAccount   SharedAccount?    @relation(fields: [sharedAccountId], references: [id])
+}
+
+model PlaidConnection {
+  id              String            @id @default(uuid())
+  accessToken     String            @unique
+  itemId          String            @unique
+  userId          String
+  user            User              @relation(fields: [userId], references: [id])
+  createdAt       DateTime          @default(now())
 }

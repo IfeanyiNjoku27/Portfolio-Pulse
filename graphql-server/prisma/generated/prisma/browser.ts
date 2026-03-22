@@ -32,3 +32,8 @@ export type SharedAccount = Prisma.SharedAccountModel
  * 
  */
 export type Transaction = Prisma.TransactionModel
+/**
+ * Model PlaidConnection
+ * 
+ */
+export type PlaidConnection = Prisma.PlaidConnectionModel

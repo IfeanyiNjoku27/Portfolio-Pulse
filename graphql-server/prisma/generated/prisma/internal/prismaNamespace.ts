@@ -386,7 +386,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   SharedAccount: 'SharedAccount',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  PlaidConnection: 'PlaidConnection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "sharedAccount" | "transaction"
+    modelProps: "user" | "sharedAccount" | "transaction" | "plaidConnection"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PlaidConnection: {
+      payload: Prisma.$PlaidConnectionPayload<ExtArgs>
+      fields: Prisma.PlaidConnectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PlaidConnectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PlaidConnectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        findFirst: {
+          args: Prisma.PlaidConnectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PlaidConnectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        findMany: {
+          args: Prisma.PlaidConnectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>[]
+        }
+        create: {
+          args: Prisma.PlaidConnectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        createMany: {
+          args: Prisma.PlaidConnectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PlaidConnectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>[]
+        }
+        delete: {
+          args: Prisma.PlaidConnectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        update: {
+          args: Prisma.PlaidConnectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.PlaidConnectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PlaidConnectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PlaidConnectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.PlaidConnectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlaidConnectionPayload>
+        }
+        aggregate: {
+          args: Prisma.PlaidConnectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlaidConnection>
+        }
+        groupBy: {
+          args: Prisma.PlaidConnectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaidConnectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PlaidConnectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlaidConnectionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -702,6 +777,17 @@ export const TransactionScalarFieldEnum = {
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+export const PlaidConnectionScalarFieldEnum = {
+  id: 'id',
+  accessToken: 'accessToken',
+  itemId: 'itemId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PlaidConnectionScalarFieldEnum = (typeof PlaidConnectionScalarFieldEnum)[keyof typeof PlaidConnectionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -915,6 +1001,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   sharedAccount?: Prisma.SharedAccountOmit
   transaction?: Prisma.TransactionOmit
+  plaidConnection?: Prisma.PlaidConnectionOmit
 }
 
 /* Types for Logging */

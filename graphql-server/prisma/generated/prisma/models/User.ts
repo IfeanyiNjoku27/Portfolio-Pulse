@@ -176,6 +176,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
   sharedAccounts?: Prisma.SharedAccountListRelationFilter
+  plaidConnection?: Prisma.PlaidConnectionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -185,6 +186,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
   sharedAccounts?: Prisma.SharedAccountOrderByRelationAggregateInput
+  plaidConnection?: Prisma.PlaidConnectionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -197,6 +199,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   transactions?: Prisma.TransactionListRelationFilter
   sharedAccounts?: Prisma.SharedAccountListRelationFilter
+  plaidConnection?: Prisma.PlaidConnectionListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -226,6 +229,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutPostedByInput
   sharedAccounts?: Prisma.SharedAccountCreateNestedManyWithoutMembersInput
+  plaidConnection?: Prisma.PlaidConnectionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -235,6 +239,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutPostedByInput
   sharedAccounts?: Prisma.SharedAccountUncheckedCreateNestedManyWithoutMembersInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -244,6 +249,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutPostedByNestedInput
   sharedAccounts?: Prisma.SharedAccountUpdateManyWithoutMembersNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -253,6 +259,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutPostedByNestedInput
   sharedAccounts?: Prisma.SharedAccountUncheckedUpdateManyWithoutMembersNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -372,12 +379,27 @@ export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTransactionsInput, Prisma.UserUpdateWithoutTransactionsInput>, Prisma.UserUncheckedUpdateWithoutTransactionsInput>
 }
 
+export type UserCreateNestedOneWithoutPlaidConnectionInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlaidConnectionInput, Prisma.UserUncheckedCreateWithoutPlaidConnectionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlaidConnectionInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPlaidConnectionNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlaidConnectionInput, Prisma.UserUncheckedCreateWithoutPlaidConnectionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlaidConnectionInput
+  upsert?: Prisma.UserUpsertWithoutPlaidConnectionInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlaidConnectionInput, Prisma.UserUpdateWithoutPlaidConnectionInput>, Prisma.UserUncheckedUpdateWithoutPlaidConnectionInput>
+}
+
 export type UserCreateWithoutSharedAccountsInput = {
   id: string
   firstName: string
   email: string
   createdAt?: Date | string
   transactions?: Prisma.TransactionCreateNestedManyWithoutPostedByInput
+  plaidConnection?: Prisma.PlaidConnectionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSharedAccountsInput = {
@@ -386,6 +408,7 @@ export type UserUncheckedCreateWithoutSharedAccountsInput = {
   email: string
   createdAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutPostedByInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSharedAccountsInput = {
@@ -425,6 +448,7 @@ export type UserCreateWithoutTransactionsInput = {
   email: string
   createdAt?: Date | string
   sharedAccounts?: Prisma.SharedAccountCreateNestedManyWithoutMembersInput
+  plaidConnection?: Prisma.PlaidConnectionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -433,6 +457,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   email: string
   createdAt?: Date | string
   sharedAccounts?: Prisma.SharedAccountUncheckedCreateNestedManyWithoutMembersInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -457,6 +482,7 @@ export type UserUpdateWithoutTransactionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sharedAccounts?: Prisma.SharedAccountUpdateManyWithoutMembersNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -464,6 +490,59 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sharedAccounts?: Prisma.SharedAccountUncheckedUpdateManyWithoutMembersNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPlaidConnectionInput = {
+  id: string
+  firstName: string
+  email: string
+  createdAt?: Date | string
+  transactions?: Prisma.TransactionCreateNestedManyWithoutPostedByInput
+  sharedAccounts?: Prisma.SharedAccountCreateNestedManyWithoutMembersInput
+}
+
+export type UserUncheckedCreateWithoutPlaidConnectionInput = {
+  id: string
+  firstName: string
+  email: string
+  createdAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutPostedByInput
+  sharedAccounts?: Prisma.SharedAccountUncheckedCreateNestedManyWithoutMembersInput
+}
+
+export type UserCreateOrConnectWithoutPlaidConnectionInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlaidConnectionInput, Prisma.UserUncheckedCreateWithoutPlaidConnectionInput>
+}
+
+export type UserUpsertWithoutPlaidConnectionInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPlaidConnectionInput, Prisma.UserUncheckedUpdateWithoutPlaidConnectionInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlaidConnectionInput, Prisma.UserUncheckedCreateWithoutPlaidConnectionInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPlaidConnectionInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPlaidConnectionInput, Prisma.UserUncheckedUpdateWithoutPlaidConnectionInput>
+}
+
+export type UserUpdateWithoutPlaidConnectionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUpdateManyWithoutPostedByNestedInput
+  sharedAccounts?: Prisma.SharedAccountUpdateManyWithoutMembersNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPlaidConnectionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutPostedByNestedInput
   sharedAccounts?: Prisma.SharedAccountUncheckedUpdateManyWithoutMembersNestedInput
 }
 
@@ -473,6 +552,7 @@ export type UserUpdateWithoutSharedAccountsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUpdateManyWithoutPostedByNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSharedAccountsInput = {
@@ -481,6 +561,7 @@ export type UserUncheckedUpdateWithoutSharedAccountsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutPostedByNestedInput
+  plaidConnection?: Prisma.PlaidConnectionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutSharedAccountsInput = {
@@ -498,11 +579,13 @@ export type UserUncheckedUpdateManyWithoutSharedAccountsInput = {
 export type UserCountOutputType = {
   transactions: number
   sharedAccounts: number
+  plaidConnection: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
   sharedAccounts?: boolean | UserCountOutputTypeCountSharedAccountsArgs
+  plaidConnection?: boolean | UserCountOutputTypeCountPlaidConnectionArgs
 }
 
 /**
@@ -529,6 +612,13 @@ export type UserCountOutputTypeCountSharedAccountsArgs<ExtArgs extends runtime.T
   where?: Prisma.SharedAccountWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPlaidConnectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlaidConnectionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -537,6 +627,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   sharedAccounts?: boolean | Prisma.User$sharedAccountsArgs<ExtArgs>
+  plaidConnection?: boolean | Prisma.User$plaidConnectionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -565,6 +656,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   sharedAccounts?: boolean | Prisma.User$sharedAccountsArgs<ExtArgs>
+  plaidConnection?: boolean | Prisma.User$plaidConnectionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -575,6 +667,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
     sharedAccounts: Prisma.$SharedAccountPayload<ExtArgs>[]
+    plaidConnection: Prisma.$PlaidConnectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -977,6 +1070,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   transactions<T extends Prisma.User$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sharedAccounts<T extends Prisma.User$sharedAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sharedAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SharedAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  plaidConnection<T extends Prisma.User$plaidConnectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$plaidConnectionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlaidConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1448,6 +1542,30 @@ export type User$sharedAccountsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.SharedAccountScalarFieldEnum | Prisma.SharedAccountScalarFieldEnum[]
+}
+
+/**
+ * User.plaidConnection
+ */
+export type User$plaidConnectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlaidConnection
+   */
+  select?: Prisma.PlaidConnectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlaidConnection
+   */
+  omit?: Prisma.PlaidConnectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlaidConnectionInclude<ExtArgs> | null
+  where?: Prisma.PlaidConnectionWhereInput
+  orderBy?: Prisma.PlaidConnectionOrderByWithRelationInput | Prisma.PlaidConnectionOrderByWithRelationInput[]
+  cursor?: Prisma.PlaidConnectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlaidConnectionScalarFieldEnum | Prisma.PlaidConnectionScalarFieldEnum[]
 }
 
 /**

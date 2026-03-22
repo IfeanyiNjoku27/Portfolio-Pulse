@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   SharedAccount: 'SharedAccount',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  PlaidConnection: 'PlaidConnection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -107,6 +108,17 @@ export const TransactionScalarFieldEnum = {
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+export const PlaidConnectionScalarFieldEnum = {
+  id: 'id',
+  accessToken: 'accessToken',
+  itemId: 'itemId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PlaidConnectionScalarFieldEnum = (typeof PlaidConnectionScalarFieldEnum)[keyof typeof PlaidConnectionScalarFieldEnum]
 
 
 export const SortOrder = {

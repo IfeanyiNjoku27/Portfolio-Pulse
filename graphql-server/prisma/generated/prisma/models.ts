@@ -11,4 +11,5 @@
 export type * from './models/User.ts'
 export type * from './models/SharedAccount.ts'
 export type * from './models/Transaction.ts'
+export type * from './models/PlaidConnection.ts'
 export type * from './commonInputTypes.ts'
