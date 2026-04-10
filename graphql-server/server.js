@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+import { admin } from './config/firebase.js';
 import "dotenv/config";
 import express from "express";
 import { ApolloServer } from "@apollo/server";
@@ -36,10 +38,6 @@ const corsOptions = {
   credentials: true,
 };
 
-// Apply middleware
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
-
 const server = new ApolloServer({
   typeDefs,
   resolvers: Resolvers,
@@ -47,7 +45,30 @@ const server = new ApolloServer({
 
 await server.start();
 
-app.use("/graphql", expressMiddleware(server));
+
+app.use(
+  "/graphql",
+  cors(corsOptions),
+  bodyParser.json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => {
+      const token = req.headers.authorization?.split("Bearer ")[1];
+      
+      if (!token.startsWith('Bearer ')) {
+        return { uid: null };
+      }
+
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        return { uid: decodedToken.uid };
+      } catch (error) {
+        throw new GraphQLError("Unauthorized", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
+      }
+    },
+  }),
+);
 
 app.listen(4000, () => {
   console.log(`🚀 Server ready at http://localhost:4000/graphql`);

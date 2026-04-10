@@ -19,6 +19,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "firebase-admin": "^13.8.0",
     "graphql": "^16.9.0",
     "pg": "^8.19.0",
     "plaid": "^41.3.0"
