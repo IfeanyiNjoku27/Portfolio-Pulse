@@ -1,21 +1,29 @@
-import { use } from "react";
 import { prisma } from "../config/adapter.js";
 import { plaidClient } from "../config/plaid.js";
+import { GraphQLError } from "graphql";
 
 export const Resolvers = {
   // QUERIES
   Query: {
-    getUser: async (_, { id }) => {
+    getUser: async (_, __, context) => {
       try {
+        const { uid } = context;
+
+        if (!uid) {
+          throw new GraphQLError('User is not authenticated', {
+            extensions: { code: 'UNAUTHENTICATED', http: { status: 401 } },
+          });
+        }
+
         const user = await prisma.user.findUnique({
-          where: {
-            id: String(id),
-          },
+          where: { id: uid },
           include: { transactions: true },
         });
 
         if (!user) {
-          throw new Error("User not found");
+          throw new GraphQLError("User cannot be found", {
+            extensions: { code: 'USER_NOT_FOUND', http: { status: 404 } },
+          });
         }
 
         return {
@@ -24,7 +32,9 @@ export const Resolvers = {
         };
       } catch (error) {
         console.error("Error fetching user:", error);
-        throw new Error("Failed to fetch user data");
+        throw new GraphQLError("Failed to fetch user data", {
+          extensions: { code: 'FAILED_TO_FETCH_USER_DATA', http: { status: 500 } },
+        });
       }
     },
 
@@ -98,7 +108,9 @@ export const Resolvers = {
           "Error creating Plaid link token: ",
           error.response?.data || error,
         );
-        throw new Error("Failed to create Plaid link token");
+        throw new GraphQLError("Failed to create Plaid link token", {
+          extensions: { code: 'FAILED_TO_CREATE_LINK_TOKEN', http: { status: 500 } },
+        });
       }
     },
 
@@ -128,7 +140,9 @@ export const Resolvers = {
           "Error exchanging public token:",
           error.response?.data || error,
         );
-        throw new Error("Failed to exchange public token");
+        throw new GraphQLError("Failed to exchange public token", {
+          extensions: { code: 'FAILED_TO_EXCHANGE_PUBLIC_TOKEN', http: { status: 500 } },
+        });
       }
     },
 
@@ -183,7 +197,9 @@ export const Resolvers = {
           "Error syncing transaction:",
           error.response?.data || error,
         );
-        throw new Error("Failed to sync Plaid transactions");
+        throw new GraphQLError("Failed to sync Plaid transactions", {
+          extensions: { code: 'FAILED_TO_SYNC_PLAID_TRANSACTIONS', http: { status: 500 } },
+        });
       }
     },
   },
