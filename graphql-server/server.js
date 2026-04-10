@@ -24,11 +24,11 @@ const corsOptions = {
     if (
       !origin ||
       allowedOrigins.includes(origin) ||
-      origin.includes("ngrok-free.app") || 
-      origin.includes("ngrok-free.dev") || 
-      origin.includes("ngrok.io"))
-    {
-      callback(null, trace);
+      origin.includes("ngrok-free.app") ||
+      origin.includes("ngrok-free.dev") ||
+      origin.includes("ngrok.io")
+    ) {
+      callback(null, true);
     } else {
       callback(new Error(`Origin ${origin} not allowed by CORS`));
     }

@@ -1,11 +1,16 @@
 import { Stack } from "expo-router";
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 
+const API_URL =
+  process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000/graphql";
+console.log("Expo is using API URL:", API_URL);
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/graphql';
 const link = new HttpLink({
   uri: API_URL,
+  headers: {
+    "ngrok-skip-browser-warning": "true",
+  },
 });
 const client = new ApolloClient({
   link: link,
@@ -15,11 +20,11 @@ const client = new ApolloClient({
 export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
-      <Stack initialRouteName="index">
-        <Stack.Screen name="index" options={{ headerShown: false}} />
-        <Stack.Screen name="signup" options={{ headerShown: false}} />
-        </Stack>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="signup" options={{ headerShown: false }} />
+      </Stack>
     </ApolloProvider>
-
   );
 }

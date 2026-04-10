@@ -4,12 +4,20 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
+  FlatList,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import BalanceCard from "@/components/BalanceCard";
 import TransactionRow from "@/components/TransactionRow";
 import EmptyState from "@/components/EmpyState";
+import SpendingBlock from "@/components/SpendingBlock";
+import { formatCurrency } from "@/utils/financeUtils";
+import {
+  calculateRoundUp,
+  getSpendingByCategory,
+  calculateTotalSavings,
+} from "@/utils/financeUtils";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "expo-router";
 import { auth } from "@/utils/firebaseConfig";
@@ -23,8 +31,8 @@ import PlaidLinkButton from "@/components/PlaidLinkButton";
 const GET_USER_DATA = gql`
   query GetUserData($id: ID!) {
     getUser(id: $id) {
-    id
-    firstName
+      id
+      firstName
       personalTransactions {
         id
         description
@@ -33,8 +41,8 @@ const GET_USER_DATA = gql`
         date
         type
       }
+    }
   }
-}
 `;
 
 export default function Home() {
@@ -66,6 +74,8 @@ export default function Home() {
     skip: !userId, // dont run query until firebase gives id
   });
 
+  const transactions = data?.getUser?.personalTransactions || [];
+
   //useMemo to handle live data and calculations
   const { totalBalance, totalSpent } = useMemo(() => {
     let balance = 0;
@@ -82,7 +92,23 @@ export default function Home() {
       });
     }
     return { totalBalance: balance, totalSpent: spent };
-  }, [data]);
+  }, [transactions]);
+
+  // Calculation utlilites
+  const spareChangeSaved = calculateTotalSavings(transactions);
+
+  // Format the numbers for the Balance Card
+  const formattedBalance = formatCurrency(totalBalance);
+  const formattedSpent = formatCurrency(totalSpent);
+
+  // Category data
+  const categoryData = useMemo(
+    () => getSpendingByCategory(transactions),
+    [transactions],
+  );
+
+  // recent transactions
+  const recentTransactions = transactions.slice(0, 5);
 
   // signout function
   const handleSignOut = async () => {
@@ -100,57 +126,115 @@ export default function Home() {
   if (error)
     return (
       <View style={styles.centered}>
-        <Text>Error loading data: {error.message}</Text>
+        <Text style={{ color: "red" }}>
+          Error loading data: {error.message}
+        </Text>
       </View>
     );
 
-  const transactions = data?.getUser?.personalTransactions || [];
   // 5. Render the UI
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.headerContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.headerRow}>
         <Text style={styles.header}>
           Welcome, {data?.getUser?.firstName || "User"}
         </Text>
-        {/* Sign Out Button */}
         <TouchableOpacity onPress={handleSignOut}>
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
+
       {userId && <PlaidLinkButton userId={userId} />}
 
-      <BalanceCard balance={totalBalance} spent={totalSpent} />
+      <BalanceCard balance={formattedBalance} spent={formattedSpent} />
 
-      <Text style={styles.subHeader}>Recent Transactions</Text>
+      {/* Spare Change UI */}
+      <View style={styles.spareChangeCard}>
+        <Text style={styles.spareChangeTitle}>Spare Change Saved</Text>
+        <Text style={styles.spareChangeAmount}>
+          ${spareChangeSaved.toFixed(2)}
+        </Text>
+      </View>
 
-      {transactions.length === 0 ? (
+      {/* Spending Block UI */}
+      <View style={styles.spendingBlockContainer}>
+        <Text style={styles.subHeader}>Spending by Category</Text>
+        <SpendingBlock data={categoryData} />
+      </View>
+
+      {/* Recent Transactions Section */}
+      <View style={styles.recentHeaderRow}>
+        <Text style={styles.subHeader}>Recent Transactions</Text>
+        <TouchableOpacity onPress={() => router.push("/transactions")}>
+          <Text style={styles.seeAllText}>See All</Text>
+        </TouchableOpacity>
+      </View>
+
+      {recentTransactions.length === 0 ? (
         <EmptyState message="No transactions yet. Start tracking!" />
       ) : (
-        transactions.map((tx: any) => (
+        recentTransactions.map((tx: any) => (
           <TransactionRow key={tx.id} transaction={tx} />
         ))
       )}
+
+      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#000000" },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000000" },
+  container: { flex: 1, backgroundColor: "#bdb8b8", paddingHorizontal: 20 },
+  headerContainer: { paddingBottom: 10 },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000000",
+  },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
-    marginTop: 40,
+    marginTop: 60, // Adjusted for SafeArea
     marginBottom: 20,
   },
-  header: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },
+  header: { fontSize: 24, fontWeight: "bold", color: "#000000" }, // Changed to black for contrast against grey background
   signOutText: { color: "#FF3B30", fontSize: 16, fontWeight: "600" },
   subHeader: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 10,
     marginTop: 20,
-    color: "#FFFFFF"
+    color: "#000000",
+  },
+  spareChangeCard: {
+    backgroundColor: "#000000",
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  spareChangeTitle: { color: "#FFFFFF", fontSize: 16, fontWeight: "500" },
+  spareChangeAmount: { color: "#34C759", fontSize: 18, fontWeight: "bold" },
+  spendingBlockContainer: {
+    marginTop: 10,
+  },
+  recentHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  seeAllText: {
+    color: "#007AFF",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

@@ -17,8 +17,8 @@ export interface QueryData {
 
 //Require a label (e.g: "Total Balance") and an 'amount' (e.g: 5000)
 export interface BalanceCardProp {
-  balance: number;
-  spent: number;
+  balance: number | string;
+  spent: number | string;
 }
 
 // empty state interface props
@@ -40,5 +40,5 @@ export interface TransactionRowProp {
 
 // Plaid link token prop
 export interface PlaidLinkButtonProps {
-    userId: string;
+  userId: string;
 }

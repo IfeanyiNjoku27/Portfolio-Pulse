@@ -6,9 +6,26 @@ export const Resolvers = {
   // QUERIES
   Query: {
     getUser: async (_, { id }) => {
-      return await prisma.user.findUnique({
-        where: { id },
-      });
+      try {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: String(id),
+          },
+          include: { transactions: true },
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        return {
+          ...user,
+          personalTransactions: user.transactions,
+        };
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        throw new Error("Failed to fetch user data");
+      }
     },
 
     getSharedAccount: async (_, { id }) => {
@@ -141,7 +158,9 @@ export const Resolvers = {
             amountInCents: Math.round(absAmount * 100),
             // grabbing primary categories
             category:
-              t.personal_finance_category.primary || t.category?.[0] || "Other",
+              t.personal_finance_category?.primary ||
+              t.category?.[0] ||
+              "Other",
             type: isWithdrawal ? "WITHDRAWAL" : "DEPOSIT",
             description: t.name,
             date: new Date(t.date),
@@ -160,7 +179,10 @@ export const Resolvers = {
         );
         return true;
       } catch (error) {
-        console.error("Error syncing transaction:", error.response?.data || error);
+        console.error(
+          "Error syncing transaction:",
+          error.response?.data || error,
+        );
         throw new Error("Failed to sync Plaid transactions");
       }
     },
