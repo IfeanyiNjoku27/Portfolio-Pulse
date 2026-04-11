@@ -44,6 +44,8 @@ model SharedAccount {
 
 model Transaction {
   id              String            @id @default(uuid())
+  plaidId         String?           @unique // 
+  pending         Boolean           @default(false)
   amount          Float 
   amountInCents   Int
   category        String

@@ -40,7 +40,7 @@ export const Resolvers = {
       }
     },
 
-    getSharedAccount: async (_, _, context) => {
+    getSharedAccount: async (_, __, context) => {
       return await prisma.sharedAccount.findUnique({
         where: { id: context.sharedAccountId },
       });
@@ -98,7 +98,7 @@ export const Resolvers = {
     },
 
     // Plaid mutation
-    createPlaidLinkToken: async (_, _, context) => {
+    createPlaidLinkToken: async (_, __, context) => {
       try {
         const tokenResponse = await plaidClient.linkTokenCreate({
           user: {
@@ -154,7 +154,7 @@ export const Resolvers = {
       }
     },
 
-    syncPlaidTransactions: async (_, _, context) => {
+    syncPlaidTransactions: async (_, __, context) => {
       try {
         // get users saved plaid connection
         const connection = await prisma.plaidConnection.findFirst({
@@ -178,17 +178,15 @@ export const Resolvers = {
           data: { cursor: response.data.next_cursor },
         });       
 
-        const newTransactions = response.data.added;
-
-        // map plaid data to prisma schema
-        const transactionToSave = newTransactions.map((t) => {
+        // Helper function to map Plaid transaction to Prisma schema
+        const mapPlaidTx = (t) => {
           const isWithdrawal = t.amount > 0;
           const absAmount = Math.abs(t.amount);
 
           return {
+            plaidId: t.transaction_id,
             amount: absAmount,
             amountInCents: Math.round(absAmount * 100),
-            // grabbing primary categories
             category:
               t.personal_finance_category?.primary ||
               t.category?.[0] ||
@@ -196,18 +194,40 @@ export const Resolvers = {
             type: isWithdrawal ? "WITHDRAWAL" : "DEPOSIT",
             description: t.name,
             date: new Date(t.date),
+            pending: t.pending,
             postedById: context.uid,
           };
-        });
+        };
 
-        // save all to database at once
-        if (transactionToSave.length > 0) {
-          await prisma.transaction.createMany({
-            data: transactionToSave,
-          });
-        }
+        // Map removed transactions to delete operations
+        const removedOps = response.data.removed.map((t) =>
+          prisma.transaction.deleteMany({
+            where: { plaidId: t.transaction_id },
+          })
+        );
+
+        // Map modified transactions to update operations
+        const modifiedOps = response.data.modified.map((t) =>
+          prisma.transaction.updateMany({
+            where: { plaidId: t.transaction_id },
+            data: mapPlaidTx(t),
+          })
+        );
+
+        // Map added transactions to create operations
+        const addedOps = response.data.added.map((t) =>
+          prisma.transaction.upsert({
+            where: { plaidId: t.transaction_id },
+            create: mapPlaidTx(t),
+            update: mapPlaidTx(t),
+          })
+        );
+
+        // Execute all operations in a transaction
+        await prisma.$transaction([...removedOps, ...modifiedOps, ...addedOps]);
+
         console.log(
-          `Successfully sycned ${transactionToSave.length} transactions!`,
+          `Successfully synced ${response.data.added.length} added, ${response.data.modified.length} modified, ${response.data.removed.length} removed transactions!`
         );
         return true;
       } catch (error) {
