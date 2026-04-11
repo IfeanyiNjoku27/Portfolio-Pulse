@@ -10,7 +10,7 @@ export default function BalanceCard({
     <View style={styles.card}>
       <View style={styles.textContainer}>
         <Text style={styles.label}>Balance: ${balance}</Text>
-        <Text style={styles.amount}>Spent: ${spent}</Text>
+        <Text style={styles.amount}>Spent: {spent}</Text>
       </View>
     </View>
   );

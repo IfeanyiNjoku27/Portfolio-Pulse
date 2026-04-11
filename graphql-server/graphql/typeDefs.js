@@ -18,13 +18,14 @@ type  User {
     email: String!
     personalTransactions: [Transaction!]
     sharedAccounts: [SharedAccount!]
+    plaidConnections: [PlaidConnection!]
     createdAt: String!
 }
 
 # Shared Account type (couples/families)
 type SharedAccount {
     id: ID!
-    name: String!               #e.g., valentines date fund, cube trip savings
+    name: String!               #e.g., valentines date fund, trip savings
     type: AccountType!
     members: [User!]!
     transactions: [Transaction!]
@@ -47,6 +48,13 @@ type Transaction {
     postedBy: User!
     sharedAccountId: ID
 }
+
+# Type to query a users connection
+    type PlaidConnection {
+        id: ID!
+        itemId: String!
+        createdAt: String!
+    }
 
 # Queries
 type Query {
@@ -77,5 +85,13 @@ type Mutation {
         description: String
         sharedAccountId: ID
     ): Transaction! 
+
+    exchangePublicToken(publicToken: String! userId: ID!): Boolean!
+
+    # Plaid link token
+    createPlaidLinkToken(userId: ID!): String!
+
+    # fetch latest transactions from plaid and saves them to database
+    syncPlaidTransactions(userId: ID!): Boolean!
 }
 `;
