@@ -3,39 +3,49 @@ import { plaidClient } from "../config/plaid.js";
 import { GraphQLError } from "graphql";
 import { encrypt } from "../utils/crypto.js";
 import { decrypt } from "../utils/crypto.js";
+import { admin } from "../config/firebase.js";
 
 export const Resolvers = {
   // QUERIES
   Query: {
     getUser: async (_, __, context) => {
       try {
-        const { uid } = context;
+        const { uid, email, firstName } = context;
 
         if (!uid) {
-          throw new GraphQLError('User is not authenticated', {
-            extensions: { code: 'UNAUTHENTICATED', http: { status: 401 } },
+          throw new GraphQLError("User is not authenticated", {
+            extensions: { code: "UNAUTHENTICATED", http: { status: 401 } },
           });
         }
 
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { id: uid },
           include: { transactions: true },
         });
 
         if (!user) {
-          throw new GraphQLError("User cannot be found", {
-            extensions: { code: 'USER_NOT_FOUND', http: { status: 404 } },
+          console.log(`Creating new user with ID: ${uid} }`);
+          user = await prisma.user.create({
+            data: { 
+              id: uid, 
+              email: email || "unknown@email.com", 
+              firstName: firstName || "Unknown"
+            },
+            include: { transactions: true },
           });
         }
 
         return {
           ...user,
-          personalTransactions: user.transactions,
+          personalTransactions: user.transactions || [],
         };
       } catch (error) {
-        console.error("Error fetching user:", error);
-        throw new GraphQLError("Failed to fetch user data", {
-          extensions: { code: 'FAILED_TO_FETCH_USER_DATA', http: { status: 500 } },
+        console.error("Error getting or creating user:", error);
+        throw new GraphQLError("Failed to get or create user", {
+          extensions: {
+            code: "FAILED_TO_GET_OR_CREATE_USER",
+            http: { status: 500 },
+          },
         });
       }
     },
@@ -117,7 +127,10 @@ export const Resolvers = {
           error.response?.data || error,
         );
         throw new GraphQLError("Failed to create Plaid link token", {
-          extensions: { code: 'FAILED_TO_CREATE_LINK_TOKEN', http: { status: 500 } },
+          extensions: {
+            code: "FAILED_TO_CREATE_LINK_TOKEN",
+            http: { status: 500 },
+          },
         });
       }
     },
@@ -126,7 +139,7 @@ export const Resolvers = {
       try {
         // send the public token to Plaid to exchange it
         const response = await plaidClient.itemPublicTokenExchange({
-          public_token: publicToken
+          public_token: publicToken,
         });
 
         const accessToken = encrypt(response.data.access_token);
@@ -149,7 +162,10 @@ export const Resolvers = {
           error.response?.data || error,
         );
         throw new GraphQLError("Failed to exchange public token", {
-          extensions: { code: 'FAILED_TO_EXCHANGE_PUBLIC_TOKEN', http: { status: 500 } },
+          extensions: {
+            code: "FAILED_TO_EXCHANGE_PUBLIC_TOKEN",
+            http: { status: 500 },
+          },
         });
       }
     },
@@ -166,17 +182,17 @@ export const Resolvers = {
         const decryptedToken = decrypt(connection.accessToken);
         const cursor = connection.cursor || undefined;
 
-        // fetch from plaid using the saved cursor 
+        // fetch from plaid using the saved cursor
         const response = await plaidClient.transactionsSync({
           access_token: decryptedToken,
           cursor: cursor,
         });
 
-        // update the databse with the new cursor (bookmark) 
+        // update the databse with the new cursor (bookmark)
         await prisma.plaidConnection.update({
           where: { id: connection.id },
           data: { cursor: response.data.next_cursor },
-        });       
+        });
 
         // Helper function to map Plaid transaction to Prisma schema
         const mapPlaidTx = (t) => {
@@ -203,7 +219,7 @@ export const Resolvers = {
         const removedOps = response.data.removed.map((t) =>
           prisma.transaction.deleteMany({
             where: { plaidId: t.transaction_id },
-          })
+          }),
         );
 
         // Map modified transactions to update operations
@@ -211,7 +227,7 @@ export const Resolvers = {
           prisma.transaction.updateMany({
             where: { plaidId: t.transaction_id },
             data: mapPlaidTx(t),
-          })
+          }),
         );
 
         // Map added transactions to create operations
@@ -220,14 +236,14 @@ export const Resolvers = {
             where: { plaidId: t.transaction_id },
             create: mapPlaidTx(t),
             update: mapPlaidTx(t),
-          })
+          }),
         );
 
         // Execute all operations in a transaction
         await prisma.$transaction([...removedOps, ...modifiedOps, ...addedOps]);
 
         console.log(
-          `Successfully synced ${response.data.added.length} added, ${response.data.modified.length} modified, ${response.data.removed.length} removed transactions!`
+          `Successfully synced ${response.data.added.length} added, ${response.data.modified.length} modified, ${response.data.removed.length} removed transactions!`,
         );
         return true;
       } catch (error) {
@@ -236,7 +252,10 @@ export const Resolvers = {
           error.response?.data || error,
         );
         throw new GraphQLError("Failed to sync Plaid transactions", {
-          extensions: { code: 'FAILED_TO_SYNC_PLAID_TRANSACTIONS', http: { status: 500 } },
+          extensions: {
+            code: "FAILED_TO_SYNC_PLAID_TRANSACTIONS",
+            http: { status: 500 },
+          },
         });
       }
     },

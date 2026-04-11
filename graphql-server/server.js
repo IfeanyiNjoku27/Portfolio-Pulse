@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { admin } from './config/firebase.js';
+import { admin } from "./config/firebase.js";
 import "dotenv/config";
 import express from "express";
 import { ApolloServer } from "@apollo/server";
@@ -45,7 +45,6 @@ const server = new ApolloServer({
 
 await server.start();
 
-
 app.use(
   "/graphql",
   cors(corsOptions),
@@ -53,14 +52,14 @@ app.use(
   expressMiddleware(server, {
     context: async ({ req }) => {
       const token = req.headers.authorization?.split("Bearer ")[1];
-      
-      if (!token.startsWith('Bearer ')) {
-        return { uid: null };
+
+      if (!token) {
+        return { uid: null, email: null };
       }
 
       try {
         const decodedToken = await admin.auth().verifyIdToken(token);
-        return { uid: decodedToken.uid };
+        return { uid: decodedToken.uid, email: decodedToken.email };
       } catch (error) {
         throw new GraphQLError("Unauthorized", {
           extensions: { code: "UNAUTHENTICATED" },

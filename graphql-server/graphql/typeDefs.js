@@ -73,6 +73,9 @@ type Mutation {
     #Create a new user
     createUser(id: ID!, firstName: String!, email: String!): User!
 
+    # Delete user and all their transactions (personal and shared)
+    deleteUser(id: ID!): User!
+
     # Initialize new shared pool for the couple accounts 
     createSharedAccount(name: String!, type: AccountType!, memberIds: [ID!]!): SharedAccount!
 
