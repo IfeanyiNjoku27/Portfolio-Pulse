@@ -32,41 +32,43 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-
   // initialize apollo mutation hook
   const [createUserInDB] = useMutation(CREATE_USER_MUTATION);
 
   const handleSignUp = async () => {
     if (!firstName || !email || !password) {
-        Alert.alert("Error", "Please fill out all fields");
-        return;
+      Alert.alert("Error", "Please fill out all fields");
+      return;
     }
 
     setIsLoading(true);
     try {
-        // Create user in firebase first 
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const firebaseUser = userCredential.user;
+      // Create user in firebase first
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const firebaseUser = userCredential.user;
 
-        // send new firebase uid to database
-        await createUserInDB({
-            variables: {
-                id: firebaseUser.uid,
-                firstName: firstName,
-                email: email,
-            }
-        });
+      // send new firebase uid to database
+      await createUserInDB({
+        variables: {
+          id: firebaseUser.uid,
+          firstName: firstName,
+          email: email,
+        },
+      });
 
-        // upon success, route user to dashboard
-        Alert.alert("Success", "Account created Sucessfully!")
-        router.replace('/')
-
+      // upon success, route user to dashboard
+      Alert.alert("Success", "Account created Sucessfully!");
+      router.replace("/");
     } catch (error: any) {
-        Alert.alert("Regristration Failed", error.message);
+      Alert.alert("Regristration Failed", error.message);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -94,7 +96,11 @@ export default function SignUp() {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={isLoading}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSignUp}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
@@ -102,7 +108,7 @@ export default function SignUp() {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.push('./login')}>
+      <TouchableOpacity onPress={() => router.push("./login")}>
         <Text style={styles.linkText}>Already have an account? Log in</Text>
       </TouchableOpacity>
     </View>
@@ -110,10 +116,43 @@ export default function SignUp() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#f5f5f5' },
-  header: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' },
-  input: { backgroundColor: '#fff', padding: 15, borderRadius: 8, marginBottom: 15, borderWidth: 1, borderColor: '#ddd' },
-  button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  linkText: { color: '#007AFF', textAlign: 'center', marginTop: 20, fontSize: 14 }
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    backgroundColor: "#000000",
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 30,
+    textAlign: "center",
+    color: "#FFFFFF"
+  },
+  input: {
+    backgroundColor: "#1C1C1E",
+    color: "#FFFFFF",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#2C2C2E",
+  },
+  placeholderTextColor: {
+    color: "#FFFFFF"
+  },
+  button: {
+    backgroundColor: "#34C759",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  linkText: {
+    color: "#0A84FF",
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 14,
+  },
 });
