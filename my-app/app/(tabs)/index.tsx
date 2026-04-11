@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import BalanceCard from "@/components/BalanceCard";
 import TransactionRow from "@/components/TransactionRow";
-import EmptyState from "@/components/EmpyState";
+import EmptyState from "@/components/EmptyState";
 import SpendingBlock from "@/components/SpendingBlock";
 import { formatCurrency } from "@/utils/financeUtils";
 import {

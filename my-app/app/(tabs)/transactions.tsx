@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/utils/firebaseConfig";
 import TransactionRow from "@/components/TransactionRow";
-import EmptyState from "@/components/EmpyState";
+import EmptyState from "@/components/EmptyState";
 import { QueryData } from "@/types";
 
 // Define graphql query
