@@ -40,9 +40,9 @@ export const Resolvers = {
       }
     },
 
-    getSharedAccount: async (_, { id }) => {
+    getSharedAccount: async (_, _, context) => {
       return await prisma.sharedAccount.findUnique({
-        where: { id },
+        where: { id: context.sharedAccountId },
       });
     },
 
@@ -98,11 +98,11 @@ export const Resolvers = {
     },
 
     // Plaid mutation
-    createPlaidLinkToken: async (_, { userId }) => {
+    createPlaidLinkToken: async (_, _, context) => {
       try {
         const tokenResponse = await plaidClient.linkTokenCreate({
           user: {
-            client_user_id: userId,
+            client_user_id: context.uid,
           },
           client_name: "Portfolio Pulse",
           products: ["transactions"],
@@ -122,7 +122,7 @@ export const Resolvers = {
       }
     },
 
-    exchangePublicToken: async (_, { publicToken, userId }) => {
+    exchangePublicToken: async (_, { publicToken }, context) => {
       try {
         // send the public token to Plaid to exchange it
         const response = await plaidClient.itemPublicTokenExchange({
@@ -141,7 +141,7 @@ export const Resolvers = {
           },
         });
 
-        console.log(`Successfully linked bank for user ${userId}`);
+        console.log(`Successfully linked bank for user ${context.uid}`);
         return true;
       } catch (error) {
         console.error(
@@ -154,19 +154,29 @@ export const Resolvers = {
       }
     },
 
-    syncPlaidTransactions: async (_, { userId }) => {
+    syncPlaidTransactions: async (_, _, context) => {
       try {
         // get users saved plaid connection
         const connection = await prisma.plaidConnection.findFirst({
-          where: { userId: userId },
+          where: { userId: context.uid },
         });
 
         if (!connection) throw new Error("No linked bank account found");
 
-        // fetch transaction history from plaid
+        const decryptedToken = decrypt(connection.accessToken);
+        const cursor = connection.cursor || undefined;
+
+        // fetch from plaid using the saved cursor 
         const response = await plaidClient.transactionsSync({
-          access_token: decrypt(connection.accessToken),
+          access_token: decryptedToken,
+          cursor: cursor,
         });
+
+        // update the databse with the new cursor (bookmark) 
+        await prisma.plaidConnection.update({
+          where: { id: connection.id },
+          data: { cursor: response.data.next_cursor },
+        });       
 
         const newTransactions = response.data.added;
 
@@ -186,7 +196,7 @@ export const Resolvers = {
             type: isWithdrawal ? "WITHDRAWAL" : "DEPOSIT",
             description: t.name,
             date: new Date(t.date),
-            postedById: userId,
+            postedById: context.uid,
           };
         });
 

@@ -66,5 +66,7 @@ model PlaidConnection {
   itemId          String            @unique
   userId          String
   user            User              @relation(fields: [userId], references: [id])
+  cursor          String?           // for pagination of transactions
   createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt @default(now())
 }
