@@ -1,6 +1,8 @@
 import { prisma } from "../config/adapter.js";
 import { plaidClient } from "../config/plaid.js";
 import { GraphQLError } from "graphql";
+import { encrypt } from "../utils/crypto.js";
+import { decrypt } from "../utils/crypto.js";
 
 export const Resolvers = {
   // QUERIES
@@ -69,6 +71,12 @@ export const Resolvers = {
       });
     },
 
+    deleteUser: async (_, { id }) => {
+      return await prisma.user.delete({
+        where: { id },
+      });
+    },
+
     addTransaction: async (_, args) => {
       const { userId, amount, category, type, description, sharedAccountId } =
         args;
@@ -118,10 +126,10 @@ export const Resolvers = {
       try {
         // send the public token to Plaid to exchange it
         const response = await plaidClient.itemPublicTokenExchange({
-          public_token: publicToken,
+          public_token: publicToken
         });
 
-        const accessToken = response.data.access_token;
+        const accessToken = encrypt(response.data.access_token);
         const itemId = response.data.item_id;
 
         // save the permanent access token to the database
@@ -129,7 +137,7 @@ export const Resolvers = {
           data: {
             accessToken: accessToken,
             itemId: itemId,
-            userId: userId,
+            userId: context.uid,
           },
         });
 
@@ -157,7 +165,7 @@ export const Resolvers = {
 
         // fetch transaction history from plaid
         const response = await plaidClient.transactionsSync({
-          access_token: connection.accessToken,
+          access_token: decrypt(connection.accessToken),
         });
 
         const newTransactions = response.data.added;
